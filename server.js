@@ -1,13 +1,16 @@
-app.use(express.static("public"));
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const axios = require("axios");
 require("dotenv").config();
 
-const app = express();
+const app = express(); // ✅ Initialize app FIRST
+
 app.use(cors());
 app.use(bodyParser.json());
+
+// ✅ Serve static frontend from "public" folder
+app.use(express.static("public"));
 
 app.post("/generate", async (req, res) => {
   const { prompt } = req.body;
@@ -38,6 +41,11 @@ app.post("/generate", async (req, res) => {
       imageUrl: "https://via.placeholder.com/512x768.png?text=Poster+Error",
     });
   }
+});
+
+// ✅ Add a fallback route to handle GET "/"
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/public/index.html");
 });
 
 app.listen(3000, () => {
