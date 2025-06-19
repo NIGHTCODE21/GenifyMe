@@ -1,1 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GenifyMe - Pexels Edition</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #121212;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+    h1 {
+      color: #ff4f8b;
+    }
+    label {
+      margin-top: 1.5rem;
+      font-weight: bold;
+    }
+    textarea {
+      width: 320px;
+      padding: 0.7rem;
+      margin-top: 0.5rem;
+      border: none;
+      border-radius: 6px;
+      resize: none;
+    }
+    button {
+      margin-top: 1.5rem;
+      background: #ff4f8b;
+      color: white;
+      padding: 0.6rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .output {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #1e1e1e;
+      border-radius: 10px;
+      max-width: 500px;
+      text-align: center;
+    }
+    img#posterImage {
+      margin-top: 1.5rem;
+      max-width: 90%;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎬 GenifyMe</h1>
+  <p>Turn your *secret* into a cinematic poster ✨</p>
+
+  <label for="secretInput">Enter your secret vibe line:</label>
+  <textarea id="secretInput" rows="3" placeholder="e.g. I ghost people before bugs ghost my code."></textarea>
+
+  <button id="generateBtn">✨ Generate Poster</button>
+
+  <div class="output" id="output">
+    <div id="statusText">Poster will appear here...</div>
+    <img id="posterImage" src="" alt="" />
+  </div>
+
+  <script>
+    async function generatePoster(secretLine) {
+      const statusText = document.getElementById("statusText");
+      const posterImage = document.getElementById("posterImage");
+
+      statusText.innerHTML = "🎬 Generating a poster from your vibe...";
+      posterImage.src = "";
+
+      try {
+        const res = await fetch("http://localhost:3000/generate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ prompt: secretLine })
+        });
+
+        const data = await res.json();
+        if (data.imageUrl) {
+          statusText.innerHTML = `<em>"${secretLine}"</em>`;
+          posterImage.src = data.imageUrl;
+        } else {
+          statusText.innerHTML = "❌ Couldn’t load the poster image.";
+        }
+      } catch (err) {
+        console.error(err);
+        statusText.innerHTML = "❌ Error: Could not reach the server.";
+      }
+    }
+
+    document.getElementById("generateBtn").addEventListener("click", () => {
+      const secretInput = document.getElementById("secretInput").value.trim() || "a cinematic mystery";
+      generatePoster(secretInput);
+    });
+  </script>
+</body>
+</html>
+
+🛠️ Added public/index.html for Railway frontend
 
